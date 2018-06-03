@@ -1,0 +1,263 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Bootstrap core JavaScript-->
+<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- Core plugin JavaScript-->
+<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Stylesheet -->
+<link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
+
+<script>
+	$( function() {
+		$('#search').keyup( function()  {
+
+			var searchBar = document.getElementById("#search");
+			if( searchBar != null ) {
+				if( searchBar.value == "")
+					console.log("EMPTY");
+					return;
+			}
+
+			var regionFilter = [];
+			var typeFilter = [];
+			$('.typeFilter-container input:checked').each( function() {
+				typeFilter.push( $(this).attr('name') );
+			})
+			$('.regionFilter-container input:checked').each( function() {
+				regionFilter.push( $(this).attr('name') );
+			})
+
+			console.log("Region: " + regionFilter);
+			console.log("Type: " + typeFilter);
+			$.ajax( {
+				type: 'POST',
+				url: '/search/',
+				data: {
+					'search_text': $('#search').val(),
+					'sort_by': $( "#sortby" ).val(),
+					'region_filtered[]': regionFilter,
+					'type_filtered[]': typeFilter,
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+				},
+				success: searchSuccess,
+				dataType: 'html'
+			} );
+		} );
+
+	});
+
+	function searchSuccess(data, textStatus, jqXHR ) {
+		console.log("Success")
+		$('#search-results').html(data);
+	}
+
+	$(window).on('load', function() {
+    console.log( "ready!" );
+		// Get the modal
+		var modal = document.getElementById('id01');
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+		    if (event.target == modal) {
+		        modal.style.display = "none";
+		    }
+		}
+
+		$( "#sortby, .filter-container :checkbox" ).change( function() {
+			var searchBar = document.getElementById("#search");
+			if( searchBar != null ) {
+				if( searchBar.value == "")
+					console.log("EMPTY");
+					return;
+			}
+
+			var regionFilter = [];
+			var typeFilter = [];
+			$('.typeFilter-container input:checked').each( function() {
+				typeFilter.push( $(this).attr('name') );
+			})
+			$('.regionFilter-container input:checked').each( function() {
+				regionFilter.push( $(this).attr('name') );
+			})
+
+			console.log("Hello");
+			$.ajax( {
+				type: 'POST',
+				url: '/search/',
+				data: {
+					'search_text': $('#search').val(),
+					'sort_by': $( "#sortby" ).val(),
+					'region_filtered[]': regionFilter,
+					'type_filtered[]': typeFilter,
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+				},
+				success: searchSuccess,
+				dataType: 'html'
+			} );
+		});
+	});
+
+</script>
+<style>
+
+.result-container {
+	margin: 20px auto;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 90%;
+  padding: 10px;
+	text-align: center;
+}
+
+.result-container input[type=text] {
+  padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+	background: #ddd;
+	border:none;
+	width: 30%;
+ -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+
+.result-container input[type=text]:focus {
+    width: 90%;
+}
+
+.result-container  .search-container button {
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background: #ddd;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.result-container  .search-container button:hover {
+  background: #ccc;
+}
+
+.sortby {
+	float: right;
+	margin: 25px 20px 20px 0px;
+}
+
+.left-maincontent {
+	width: 75%;
+	float: left;
+}
+
+.right-maincontent {
+	margin-left: 75%;
+	/* Change this to whatever the width of your left column is*/
+}
+.clear {
+	clear: both;
+}
+
+.filter-container {
+	margin: 20px auto;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  width: 80%;
+  padding: 10px;
+	font-size: 1em;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="active" href="{% url 'system:home'%}">Home</a>
+	{% if user.is_authenticated %}
+		<a href="{% url 'system:userfavourite'%}">Favourite</a>
+	  <a href="{% url 'system:managepoll'%}">Manage Poll</a>
+	  <a href="{% url 'system:createpoll'%}">Create Poll</a>
+	{% endif %}
+	<!--
+		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(True) (when on Django < 1.10 it was True)
+		For AUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(False) (when on Django < 1.10 it was False)
+  -->
+	{% if user.is_authenticated %}
+	<form action="{% url 'system:logout_user'%}" method='POST'>
+		{% csrf_token %}
+		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
+	</form>
+	{% else %}
+	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+
+	{% endif %}
+
+</div>
+<div class="left-maincontent">
+	<div class="result-container">
+
+		<div class="search-container">
+				{% csrf_token %}
+				<input type="text" placeholder="Search.." name="search" id="search">
+				<button type="button"><i class="fa fa-search"></i></button>
+		</div>
+		<div class="sortby"><b>SORT BY</b>
+			<select id="sortby">
+			  <option value="alphabeticalAZ">Alphabetical A-Z</option>
+			  <option value="alphabeticalZA">Alphabetical Z-A</option>
+			  <option value="popularity">Popularity</option>
+			</select>
+		</div>
+		<h2>Search your favourite halal restaurant</h2>
+			<ui id="search-results" >
+			</ui>
+	</div>
+</div>
+<div class="right-maincontent">
+	<div class="filter-container">
+		<div class="typeFilter-container">
+			<b>Type</b></br>
+			<input type="checkbox" name="Fast Food" value="Fast Food" checked>Fast Food<br>
+			<input type="checkbox" name="Restaurant" value="Restaurant" checked>Restaurant<br>
+			<input type="checkbox" name="Cafe" value="Cafe" checked>Cafe<br>
+			<input type="checkbox" name="Bakery" value="Bakery" checked>Bakery<br>
+			<input type="checkbox" name="Others" value="Others" checked>Others<br>
+		</div>
+		<div class="regionFilter-container">
+			</br><b>Region</b></br>
+			<input type="checkbox" name="North-East" value="North-East" checked>North-East<br>
+			<input type="checkbox" name="North" value="North" checked>North<br>
+			<input type="checkbox" name="Central" value="Central" checked>Central<br>
+			<input type="checkbox" name="West" value="West" checked>West<br>
+			<input type="checkbox" name="East" value="East" checked>East<br>
+		</div>
+	</div>
+</div>
+<div class="clear"></div>
+
+<div id="id01" class="modal">
+
+  <form id="login-form" method="POST" class="modal-content animate" action="{% url 'system:login_user'%}">
+		{% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <spann class="avatar">Login</span>
+    </div>
+
+    <div class="container">
+			{{ form }}
+			<button type="submit">Login</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <span class="psw">New User? <a href="{% url 'system:register'%}">Register</a></span>
+    </div>
+  </form>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Bootstrap core JavaScript-->
+<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- Core plugin JavaScript-->
+<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Stylesheet -->
+<link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+	$( function() {
+		$('#search').keyup( function()  {
+			console.log("Hello");
+			$.ajax( {
+				type: 'POST',
+				url: '/search/',
+				data: {
+					'search_text': $('#search').val(),
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+				},
+				success: searchSuccess,
+				dataType: 'html'
+			} );
+		} );
+
+	});
+
+	function searchSuccess(data, textStatus, jqXHR ) {
+		console.log("Success")
+		$('#search-results').html(data);
+	}
+
+
+		$(window).on('load', function() {
+	    console.log( "ready!" );
+			// Get the modal
+			var modal = document.getElementById('id01');
+
+			// When the user clicks anywhere outside of the modal, close it
+			window.onclick = function(event) {
+			    if (event.target == modal) {
+			        modal.style.display = "none";
+			    }
+			}
+		});
+
+		function savetoClickboard() {
+			var dummy = document.createElement('input');
+			text = window.location.href;
+			document.body.appendChild(dummy);
+			dummy.value = text;
+			dummy.select();
+			document.execCommand('copy');
+			document.body.removeChild(dummy);
+		}
+
+		function submitPoll() {
+			console.log("Hello - submitPoll");
+			$.ajax( {
+				type: 'POST',
+				url: '/submitpoll/',
+				data: {
+					'selected_pk': document.querySelector('input[name="places"]:checked').value,
+					'code': {{ instance.code }},
+					'poll_pk': {{ instance.pk }},
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),
+				},
+				success: function (data) {
+					if (data.success) {
+						window.location.href = data.url;
+					}
+				},
+				dataType: 'json'
+			} );
+
+		}
+
+		function closePoll() {
+			console.log("Hello - Close Poll");
+			$.ajax( {
+				type: 'POST',
+				url: '/closepoll/',
+				data: {
+					'code': {{ instance.code }},
+					'poll_pk': {{ instance.pk }},
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),
+				},
+				success: function (data) {
+					if (data.success) {
+						window.location.href = data.url;
+					}
+				},
+				dataType: 'json'
+			} );
+		}
+
+		$( document ).ready(function() {
+			var ctx = document.getElementById("myChart").getContext('2d');
+			var myChart = new Chart(ctx, {
+		    //type: 'bar',
+				type: 'horizontalBar',
+		    data: {
+		        //labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+						labels: [{% for choice in choices %} "{{ choice.shop.company_name }}", {% endfor %}],
+		        datasets: [{
+		            label: '# of Votes',
+		            //data: [12, 19, 3, 5, 2, 3],
+								data: [{% for choice in choices %} "{{ choice.vote_count }}", {% endfor %}],
+		            borderWidth: 1
+		        }]
+		    },
+		    options: {
+						maintainAspectRatio: false,
+						responsive: true,
+		        scales: {
+		            yAxes: [{
+		                ticks: {
+		                    beginAtZero:true
+		                }
+		            }]
+		        }
+		    }
+		});
+	});
+
+</script>
+<style>
+.coupon {
+    border: 5px dotted #bbb;
+    width: 80%;
+    border-radius: 15px;
+    margin: 20px auto;
+    /*max-width: 500px;*/
+}
+
+.container {
+    padding: 2px 16px;
+    background-color: #f1f1f1;
+}
+
+.coupon .company-img img {
+    display: block;
+    margin: 10px auto;
+}
+
+.promo {
+    background: #ccc;
+    padding: 3px;
+}
+
+.expire {
+    color: red;
+}
+
+.reviews-container {
+	margin: 0px auto 10px auto;
+  padding: 0px 16px 0px 16px;
+  background-color: #f1f1f1;
+}
+
+.checked {
+    color: orange;
+}
+
+.left-content {
+	width: 35%;
+	float: left;
+}
+
+.right-content {
+	margin-left: 35%;
+	/* Change this to whatever the width of your left column is*/
+}
+.clear {
+	clear: both;
+}
+
+#map {
+	height: 400px;  /* The height is 400 pixels */
+	width: 100%;  /* The width is the width of the web page */
+}
+
+.radio-toolbar input[type="radio"] {
+  display: none;
+}
+
+.radio-toolbar label {
+  display: inline-block;
+  background-color: #eee;
+  padding: 14px 11px;
+	margin: 5px auto;
+  font-family: Arial;
+  font-size: 16px;
+  cursor: pointer;
+	width: 100%
+}
+
+.radio-toolbar input[type="radio"]:checked+label {
+  background-color: #c0392b;
+  color: white;
+}
+
+.copylink_btn {
+    background-color: #c0392b;
+    color: white;
+    padding: 16px 20px;
+    margin: 20px 10px;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    opacity: 0.9;
+	float: center;
+}
+
+.closepoll_btn {
+    background-color: #c0392b;
+    color: white;
+    padding: 16px 20px;
+    margin: 20px 10px;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    opacity: 0.9;
+	float: right;
+}
+
+.poll-question {
+    /* border: 5px dotted #bbb; */
+		border: 5px dotted #ff7f50;
+    width: 80%;
+    border-radius: 15px;
+    margin: 20px auto;
+    padding: 10px;
+    /*max-width: 500px;*/
+}
+
+.poll_question_btn {
+    background-color: #c0392b;
+    color: white;
+    padding: 16px 20px;
+    margin: 10px 5px;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    opacity: 0.9;
+	float:  ;
+}
+
+/* For chart.js */
+/* canvas{
+  width:100% !important;
+  height:600px !important;
+} */
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="{% url 'system:home'%}">Home</a>
+	{% if user.is_authenticated %}
+		<a href="{% url 'system:userfavourite'%}">Favourite</a>
+		<a class="active" href="{% url 'system:managepoll'%}">Manage Poll</a>
+		<a href="{% url 'system:createpoll'%}">Create Poll</a>
+	{% endif %}
+	<!--
+		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(True) (when on Django < 1.10 it was True)
+		For AUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(False) (when on Django < 1.10 it was False)
+	-->
+	{% if user.is_authenticated %}
+	<form action="{% url 'system:logout_user'%}" method='POST'>
+		{% csrf_token %}
+		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
+	</form>
+	{% else %}
+	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+	{% endif %}
+</div>
+
+{% if isShowResult %}
+<div class="coupon">
+	<div class="container" style="background-color:white">
+		<p><b>Title:</b> {{ instance.title }}</p>
+	  <p><b>Participant:</b> {{instance.current_participant}}/{{ instance.no_of_participant }}</p>
+			<p><b>Closed:</b>
+			{% if instance.closed %} Yes
+			{% else %} No
+			{% endif %}</p>
+		<p><b>Expiry Date:</b> {{instance.expiry_date}}</p>
+		<p><b>Code:</b> {{ instance.code }}</p>
+		<canvas id="myChart" width="100	" height="100"></canvas>
+		<!-- {% for choice in choices.all %}
+		<div class="reviews-container">
+			<div class="date">{{ choice.shop.company_name }}</div>
+			<strong>{{ choice.vote_count }}</strong>
+		</div>
+		{% empty %}
+		<p>No reviews here yet :(</p>
+		{% endfor %} -->
+		</div>
+		<button class="copylink_btn" onclick="savetoClickboard()">Copy Link</button>
+		{% if isPollOwner and instance.closed == False %}
+			<button class="closepoll_btn"  onclick="closePoll()">Close Poll</button>
+		{% endif %}
+</div>
+<div class="clear"></div>
+{% else %}
+<div class="poll-question">
+    <h4>Title: {{ instance.title }}</h4>
+    <div class="radio-toolbar">
+        {% csrf_token %}
+    {% for choice in choices.all %}
+            <input type="radio" id="{{ choice.shop.pk }}" name="places" value="{{ choice.pk }}" checked>
+            <label for="{{ choice.shop.pk }}">{{ choice.shop.company_name }}</label>
+    {%endfor%}
+    <button class="poll_question_btn " onclick="submitPoll()">Submit</button>
+    </div>
+</div>
+{% endif %}
+
+
+
+<div id="id01" class="modal">
+
+  <form id="login-form" method="POST" class="modal-content animate" action="{% url 'system:login_user'%}">
+		{% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <spann class="avatar">Login</span>
+    </div>
+
+    <div class="container">
+			{{ form }}
+			<button type="submit">Login</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <span class="psw">New User? <a href="{% url 'system:register'%}">Register</a></span>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>

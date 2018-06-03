@@ -1,0 +1,264 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Bootstrap core JavaScript-->
+<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- Core plugin JavaScript-->
+<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- Stylesheet -->
+<link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script>
+	$( function() {
+		$('#search').keyup( function()  {
+			console.log("Hello");
+			$.ajax( {
+				type: 'POST',
+				url: '/search/',
+				data: {
+					'search_text': $('#search').val(),
+					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+				},
+				success: searchSuccess,
+				dataType: 'html'
+			} );
+		} );
+
+	});
+
+	function searchSuccess(data, textStatus, jqXHR ) {
+		console.log("Success")
+		$('#search-results').html(data);
+	}
+
+
+		$(window).on('load', function() {
+	    console.log( "ready!" );
+			// Get the modal
+			var modal = document.getElementById('id01');
+
+			// When the user clicks anywhere outside of the modal, close it
+			window.onclick = function(event) {
+			    if (event.target == modal) {
+			        modal.style.display = "none";
+			    }
+			}
+		});
+
+		var geocoder;
+		var map;
+		var address = "{{ shops.address  }} . Singapore"
+		//var address = "new york city";
+
+		// Initialize and add the map
+		function initMap() {
+
+			geocoder = new google.maps.Geocoder();
+
+		  // The location of Uluru
+		  //var uluru = {lat: -25.344, lng: 131.036};
+		  // The map, centered at Uluru
+
+		  // The marker, positioned at Uluru
+		  //var marker = new google.maps.Marker({position: uluru, map: map});
+
+			codeAddress(address);
+		}
+
+
+		function codeAddress(address) {
+
+		    geocoder.geocode({ 'address': address }, function (results, status) {
+		        console.log(results);
+		        var latLng = {lat: results[0].geometry.location.lat (), lng: results[0].geometry.location.lng ()};
+		        console.log (latLng);
+		        if (status == 'OK') {
+								map = new google.maps.Map(document.getElementById('map'), {zoom: 16, center: latLng});
+		            var marker = new google.maps.Marker({
+		                position: latLng,
+		                map: map
+		            });
+		            console.log (map);
+		        } else {
+		            alert('Geocode was not successful for the following reason: ' + status);
+		        }
+
+		    });
+		}
+
+
+</script>
+<style>
+.coupon {
+    /* border: 5px dotted #bbb; */
+		border: 5px dotted #ff7f50;
+    width: 80%;
+    border-radius: 15px;
+    margin: 20px auto;
+    /*max-width: 500px;*/
+}
+
+.coupon .container {
+    padding: 2px 16px;
+    background-color: #ff7f50;
+		border-top-left-radius: 15px;
+}
+
+.coupon .container h3{
+		color: white;
+}
+
+.coupon .company-img img {
+    display: block;
+    margin: 10px auto;
+}
+
+.promo {
+    background: #ccc;
+    padding: 3px;
+}
+
+.expire {
+    color: red;
+}
+
+.reviews-container {
+	margin: 0px auto 10px auto;
+  padding: 0px 16px 0px 16px;
+  background-color: #f1f1f1;
+}
+
+.checked {
+    color: orange;
+}
+
+.left-content {
+	width: 35%;
+	float: left;
+}
+
+.right-content {
+	margin-left: 35%;
+	/* Change this to whatever the width of your left column is*/
+}
+.clear {
+	clear: both;
+}
+
+#map {
+	height: 400px;  /* The height is 400 pixels */
+	width: 100%;  /* The width is the width of the web page */
+}
+
+.user-action {
+	text-decoration: none;
+	color: #2f3542;
+}
+
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="active" href="{% url 'system:home'%}">Home</a>
+	{% if user.is_authenticated %}
+		<a href="{% url 'system:userfavourite'%}">Favourite</a>
+	  <a href="{% url 'system:managepoll'%}">Manage Poll</a>
+	  <a href="{% url 'system:createpoll'%}">Create Poll</a>
+	{% endif %}
+	<!--
+		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(True) (when on Django < 1.10 it was True)
+		For AUTHENTICATED user calling {{user.is_authenticated}} results:
+			CallableBool(False) (when on Django < 1.10 it was False)
+	-->
+	{% if user.is_authenticated %}
+	<form action="{% url 'system:logout_user'%}" method='POST'>
+		{% csrf_token %}
+		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
+	</form>
+	{% else %}
+	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+	{% endif %}
+</div>
+
+
+<div class="coupon">
+	<div class="left-content">
+  	<div class="container">
+    	<h3>{{ shops.company_name  }}</h3>
+  	</div>
+		<div id="map"></div></br>
+  	<!-- <img class="company-img" src= "{% static 'image/logo.png' %}" alt="Avatar" style="width:98%;"> -->
+  	<div class="container" style="background-color:white">
+	    <b>Address:</b><p> {{ shops.address  }}</p>
+			<b>Website:</b><p> {{ shops.website  }}</p>
+			<b>Facebook:</b><p> {{ shops.facebook  }}</p>
+			<b>Instagram:</b><p> {{ shops.instagram  }}</p>
+			<b>Phone Number:</b><p> {{ shops.phone_number  }}</p>
+			<b>Email:</b><p> {{ shops.email  }}</p>
+			<b>Share:</b>
+			<p>
+				<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"><img src= "{% static 'image/facebook.png' %}" alt="facebook" style="width:8%;"></a>
+				<a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'><img src= "{% static 'image/googleplus.png' %}" alt="googleplus" style="width:8%;"></a>
+			</p>
+			{% if user.is_authenticated %}
+				<!-- {{ user.username  }},</br> -->
+				<a href="{% url 'system:add_review' pk=shops.pk %}" class="user-action"><img src= "{% static 'image/addreview.jpg' %}" alt="facebook" style="width:4%;"> Add review</a><br>
+				{% if favourited.count >= 1 %}
+					<span class="user-action">{{ favourited.count }} - You've Favourited</span>
+				{% else %}
+					<a href="{% url 'system:favourite' pk=shops.pk %}" class="user-action"><img src= "{% static 'image/favourite.png' %}" alt="facebook" style="width:4%;"> Favourite</a>
+				{% endif %}
+			{% endif %}
+	  </div>
+	</div>
+	<div class="right-content">
+
+		<div class="container" style="background-color:white">
+			{{shop.reviews.count}}
+			{% for review in reviews.all %}
+			    <div class="reviews-container">
+			        <div class="date">{{ review.created_date }}</div>
+			        <strong>{{ review.user }}</strong>
+							{% for i in review.numberOfRating %}
+								<span class="fa fa-star checked"></span>
+							{%endfor%}
+			        <p>{{ review.body|linebreaks }}</p>
+			    </div>
+					{% empty %}
+			    <p>No reviews here yet :(</p>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="id01" class="modal">
+
+  <form id="login-form" method="POST" class="modal-content animate" action="{% url 'system:login_user'%}">
+		{% csrf_token %}
+    <div class="imgcontainer">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <spann class="avatar">Login</span>
+    </div>
+
+    <div class="container">
+			{{ form }}
+			<button type="submit">Login</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+      <span class="psw">New User? <a href="{% url 'system:register'%}">Register</a></span>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
