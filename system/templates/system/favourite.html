@@ -4,11 +4,27 @@
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- Bootstrap core JavaScript-->
-<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script> -->
 <!-- Core plugin JavaScript-->
-<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script> -->
 <!-- Stylesheet -->
 <link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-en_US.js"></script>
+
 
 <script>
 
@@ -28,113 +44,142 @@
 </script>
 <style>
 
-.result-container {
-	margin: 20px auto;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  width: 50%;
-  padding: 10px;
-	text-align: center;
+.container {
+	padding: 16px;
+	background-color: white;
+	width: 100%;
 }
 
-.result-container input[type=text] {
-  padding: 6px;
-  margin-top: 8px;
-  font-size: 17px;
-	background: #ddd;
-	border:none;
-	width: 30%;
- -webkit-transition: width 0.4s ease-in-out;
-  transition: width 0.4s ease-in-out;
+/* Header/Blog Title */
+.header {
+    padding: 10px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
 }
 
-.result-container input[type=text]:focus {
-    width: 90%;
+.navbar-header{
+  margin-left:5px;
+  width:100%;
 }
 
-.result-container  .search-container button {
-  padding: 6px 10px;
-  margin-top: 8px;
-  margin-right: 16px;
-  background: #ddd;
-  font-size: 17px;
-  border: none;
-  cursor: pointer;
+
+.container {
+	padding: 16px;
+	background-color: white;
+	width: 100%;
 }
 
-.result-container  .search-container button:hover {
-  background: #ccc;
+/* Footer */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #444;
+    color: #fff;
+    /* margin-top: 20px; */
+		position: fixed;
+    left: 0;
+    bottom: 0;
+		width: 100%;
 }
 
-.favourite-card {
-	  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    transition: 0.3s;
-    width: 75%;
-    margin: 20px auto;
-		padding: 3px;
-		background-color: #e74c3c;
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+		color: #555;
 }
 
-.favourite-card  a:link, a:visited, a:hover, a:active, a:hover  {
-   color: white;
-   text-decoration: none;
-}
 
-li {
-  list-style-type: none;
-}
 </style>
 </head>
 <body>
 
-<div class="topnav">
-  <a href="{% url 'system:home'%}">Home</a>
-	{% if user.is_authenticated %}
-		<a class="active" href="{% url 'system:userfavourite'%}">Favourite</a>
-	  <a href="{% url 'system:managepoll'%}">Manage Poll</a>
-	  <a href="{% url 'system:createpoll'%}">Create Poll</a>
-	{% endif %}
-	<!--
-		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(True) (when on Django < 1.10 it was True)
-		For AUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(False) (when on Django < 1.10 it was False)
-  -->
-	{% if user.is_authenticated %}
-	<form action="{% url 'system:logout_user'%}" method='POST'>
-		{% csrf_token %}
-		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
-	</form>
-	{% else %}
-	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+	<!-- navbar-dark bg-info -->
+	<nav class="navbar navbar-expand-sm" style="padding: 10px 15%;">
+	<div class="navbar-header">
+	    <a class="navbar-brand" href="{% url 'system:blank'%}"><img src="{% static 'image/logo.png' %}" alt="banner" class="responsive" style="height: 60px; width: 120px; margin-top: -10px;"></a>
 
-	{% endif %}
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarXs">
+	        <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="navbar-collapse collapse pull-right" id="collapsingNavbarXs">
+	        <ul class="navbar-nav" style="font-family: 'Open Sans'; font-size: 18px; color: black;">
+							{% if user.is_authenticated %}
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:createpoll'%}">Create Poll</a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:managepoll'%}">Manage Poll</a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:userfavourite'%}">Favourites</a>
+	            </li>
+							{% endif %}
+							<li class="nav-item">
+									{% if user.is_authenticated %}
+									{% else %}
+											<a class="nav-link" href="{% url 'system:register'%}">Register</a>
+									{% endif %}
+	            </li>
+	            <li class="nav-item">
+									<!--
+										For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(True) (when on Django < 1.10 it was True)
+										For AUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(False) (when on Django < 1.10 it was False)
+									-->
+									{% if user.is_authenticated %}
+										<form id="logout-form" action="{% url 'system:logout_user'%}" method='POST'>
+											{% csrf_token %}
+											<!-- <button type="submit" class="auth_btn" style="width:auto;">Logout</button> -->
+										</form>
+										<!-- Note: This is outside the form as to align with other on the nav bar list -->
+										<a class="nav-link" href="javascript:{}" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+									{% else %}
+									  	<a class="nav-link" onclick="document.getElementById('id01').style.display='block'"  href="#">Login</a>
+											<!-- <button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button> -->
+									{% endif %}
+	            </li>
+	        </ul>
+	    </div>
+	</div>
+	</nav>
 
-</div>
+	<div class="header">
+	    <img src="{% static 'image/favouritesbanner.png' %}" alt="banner" class="responsive">
+	</div>
 
-<div class="result-container">
-	{% if user.is_authenticated %}
-		{% if activity.count > 0 %}
 
-			{% for act in activity %}
-				<li>
-					<div class="favourite-card">
-						<a href="/shop/{{ act.content_object.id }}/">
-							<div class="container">
-								<h4>{{ act.content_object.company_name }}</h4>
-                                <h4>{{ act.content_object.address }}</h4>
-							</div>
-						</a>
+<div class="container">
+
+	<div class="card-deck">
+		<div class="row" id="search-results">
+			{% if user.is_authenticated %}
+				{% if activity.count > 0 %}
+
+					{% for act in activity %}
+
+					<div class="col-auto mb-5">
+						<div class="card" style="width: 32.5rem;">
+							<a href="/shop/{{ act.content_object.id }}/">
+								<div class="card-body">
+									<h4 class="card-title" style="color: #777;"><b>{{ act.content_object.company_name }}</b></h4>
+									<p class="card-text text-muted">{{ act.content_object.address }}</p>
+									<p class="card-text pull-right" style="border: 2px solid #eee; margin: 10px; padding: 6px;"><small class="text-muted">{{ act.content_object.categorization }} </small></p>
+								</div>
+							</a>
+						</div>
 					</div>
-				</li>
-			{% endfor %}
-		{% else %}
-			<li><p> No favourite found </p></li>
-		{% endif %}
-	{% endif %}
-
-
+					{% endfor %}
+				{% else %}
+					<span style="color: #e74c3c;"> <h3> No favourite found </h3></span>
+				{% endif %}
+			{% endif %}
+		</div>
+	</div>
 </div>
-
+<div class="footer">
+  <b>&#169; 2018 Halal Pal & Co. All rights reserved.</b>
+</div>
 
 <div id="id01" class="modal">
 

@@ -48,6 +48,8 @@ urlpatterns = [
 
     url(r'^finishpoll/$', views.finishpoll, name='finishpoll'),
 
+    url(r'^deletepoll/$', views.deletepoll, name='deletepoll'),
+
     # Detail views for poll
     url( r'^poll/(?P<code>[0-9]+)/$', views.poll_detail, name='poll_detail'),
 ]

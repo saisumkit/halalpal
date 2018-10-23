@@ -69,6 +69,7 @@ class Poll(models.Model):
     current_participant = models.IntegerField(default=0)
     code = models.CharField(max_length=200)
     closed = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         #return "/poll/%s" %(self.code)

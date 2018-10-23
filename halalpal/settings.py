@@ -138,3 +138,5 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240

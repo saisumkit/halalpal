@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Shops, Review, Activity, Poll, Choice, Vote
-from .forms import ReviewForm
+from .forms import ReviewForm, UserCreateForm
 # for render_to_response
 from django.shortcuts import render_to_response
 from django.views import generic
@@ -18,9 +18,48 @@ from django.urls import reverse
 from django.http import JsonResponse
 import pytz
 
+import json
+#from django.core import serializers
+
 # Create your views here.
 def blank(request):
-        return redirect('system:home')
+    shops = None
+    json_shops = json.dumps(shops)
+    if request.method == 'GET':
+        search_text = request.GET.get('search')
+        #print("Search Text: " + str(search_text) )
+        if search_text != None:
+            sort_by = request.GET.get('sort_by')
+            shops = Shops.objects.filter(company_name__contains=search_text).order_by("company_name").values_list('pk', flat=True)
+            search_count = Shops.objects.filter(company_name__contains=search_text).order_by("company_name").count();
+            shops = list(shops)
+            json_shops = json.dumps(shops)
+            #print( "Shops from home" + str(shops) )
+            #serialized_shops = serializers.serialize('json', shops)
+        else:
+            search_text = "";
+            search_count = 0;
+    else:
+        search_text = "";
+        search_count = 0;
+
+
+    # some data we might wanna pass over
+    form = AuthenticationForm()
+    #else redirect to login page
+    if request.user.is_authenticated:
+        user = request.user
+        activity = Activity.objects.filter(user=user)
+        context = {'form': form, 'activity':activity, 'shops': json_shops, "search_text": search_text, "search_count": search_count }
+    else:
+        context = {'form': form, 'shops': json_shops, "search_text": search_text, "search_count": search_count  }
+    # context = {
+    #     'username': request.user.get_username,
+    #     'all_reports': Shops.objects.all()
+    # }
+
+    return render(request, 'system/index.html', context)
+    #return redirect('system:home')
     #return HttpResponse('Hello World')
 
 def userfavourite (request):
@@ -42,15 +81,37 @@ def userfavourite (request):
     return render(request, 'system/favourite.html', context)
 
 def home(request):
+
+    shops = None
+    json_shops = json.dumps(shops)
+    if request.method == 'GET':
+        search_text = request.GET.get('search')
+        #print("Search Text: " + str(search_text) )
+        if search_text != None:
+            sort_by = request.GET.get('sort_by')
+            shops = Shops.objects.filter(company_name__contains=search_text).order_by("company_name").values_list('pk', flat=True)
+            search_count = Shops.objects.filter(company_name__contains=search_text).order_by("company_name").count();
+            shops = list(shops)
+            json_shops = json.dumps(shops)
+            #print( "Shops from home" + str(shops) )
+            #serialized_shops = serializers.serialize('json', shops)
+        else:
+            search_text = "";
+            search_count = 0;
+    else:
+        search_text = "";
+        search_count = 0;
+
+
     # some data we might wanna pass over
     form = AuthenticationForm()
     #else redirect to login page
     if request.user.is_authenticated:
         user = request.user
         activity = Activity.objects.filter(user=user)
-        context = {'form': form, 'activity':activity }
+        context = {'form': form, 'activity':activity, 'shops': json_shops, "search_text": search_text, "search_count": search_count }
     else:
-        context = {'form': form }
+        context = {'form': form, 'shops': json_shops, "search_text": search_text, "search_count": search_count  }
     # context = {
     #     'username': request.user.get_username,
     #     'all_reports': Shops.objects.all()
@@ -79,19 +140,21 @@ def createpoll(request):
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
-        return redirect('system:login_user')
+        return redirect('system:home')
+        #return redirect('system:login_user')
 
 def register(request):
     if request.user.is_authenticated:
         return redirect('system:home')
     form = AuthenticationForm()
     if request.method == 'POST':
-        form_register = UserCreationForm(request.POST)
+        form_register = UserCreateForm(request.POST)
         if form_register.is_valid():
             form_register.save()
             return redirect('system:home')
     else:
-        form_register = UserCreationForm()
+        # Note: UserCreateForm is Used that is defined in form.py
+        form_register = UserCreateForm()
 
     template_name = 'system/register.html'
     return render(request, template_name, {'form_register': form_register, 'form': form } )
@@ -115,27 +178,48 @@ def login_user(request):
 
 def search( request ):
     if request.method == 'POST':
-        search_text = request.POST['search_text']
+        #theShopsId = json.loads(request.POST.get('search_result'))
+        theShopsId = request.POST.getlist('search_result[]')
+        #theShopsId
+        # selected_shop = Shops.objects.filter(id__in=theID)
+        # #search_text = request.POST['search_text']
         sort_by = request.POST['sort_by']
         region_filtered = request.POST.getlist('region_filtered[]')
         type_filtered = request.POST.getlist('type_filtered[]')
     else:
-        search_text = "";
+        theShopsId = [];
 
-    print(search_text)
+    #print(search_text)
 
-    print("Region: " + str(region_filtered) )
-    print("Type: " + str(type_filtered) )
+    print( "Shops ID: " + str(theShopsId) )
+
+    # SQLITE_LIMIT_VARIABLE_NUMBER issue where SQLite will have this error "“Too many SQL variables” error in django witih sqlite3"
+    # The issue SUSPECTED comes from ".filter(id__in=theShopsId).". Earlier version works fine
+    # Remove this line if database is change 
+    theShopsId = theShopsId[:950]
+
+    #print("Region: " + str(region_filtered) )
+    #print("Type: " + str(type_filtered) )
+
+    search_text = "";
 
     #shops = Shops.objects.filter(company_name__contains=search_text)
     if( sort_by == "alphabeticalAZ" ):
-        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("company_name")
+        #shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("company_name")
+        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(id__in=theShopsId).order_by("company_name")
+        #shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("company_name")
     elif( sort_by == "alphabeticalZA" ):
-        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("-company_name")
+        #shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("-company_name")
+        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(id__in=theShopsId).order_by("-company_name")
     elif( sort_by == "popularity" ):
-        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("-current_rating")
+        #shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text).order_by("-current_rating")
+        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(id__in=theShopsId).order_by("-current_rating")
     else:
-        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text)
+        #shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(company_name__contains=search_text)
+        shops = Shops.objects.filter(region__in=region_filtered).filter(categorization__in=type_filtered).filter(id__in=theShopsId)
+
+
+    #print( "Shop Count: " + str(shops) )
 
     return render_to_response("ajax_search.html", {'shops': shops } )
 
@@ -182,7 +266,7 @@ def managepoll(request):
     #else redirect to login page
     if request.user.is_authenticated:
         user = request.user
-        polls = Poll.objects.filter(user=user)
+        polls = Poll.objects.filter(user=user).filter(deleted = False)
         context = {'form': form, 'polls': polls }
     else:
         context = {'form': form }
@@ -241,7 +325,8 @@ def closepoll(request):
     return JsonResponse(data)
 
 def poll_detail(request, code):
-    instance = get_object_or_404( Poll, code=code)
+    active_poll = Poll.objects.filter( deleted = False )
+    instance = get_object_or_404(active_poll, code=code)
     choices = Choice.objects.filter(poll=instance)
 
     print(instance.user.username)
@@ -320,6 +405,24 @@ def finishpoll(request):
     data = {
         'success': True,
         'url': reverse('system:poll_detail', args=[poll.code,]),
+    }
+
+    return JsonResponse(data)
+    #return redirect(, code = poll.code)
+
+def deletepoll(request):
+    if request.method == 'POST':
+        poll_id = request.POST.get('poll_pk')
+        print("Deleting Poll...")
+        poll = Poll.objects.get( pk = poll_id )
+        poll.deleted = True
+        poll.save()
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    data = {
+        'success': True,
+        'url': reverse('system:managepoll'),
     }
 
     return JsonResponse(data)

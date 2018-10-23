@@ -4,49 +4,62 @@
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- Bootstrap core JavaScript-->
-<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script> -->
 <!-- Core plugin JavaScript-->
-<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script> -->
 <!-- Stylesheet -->
 <link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-en_US.js"></script>
+
+
 <script>
-	$( function() {
-		$('#search').keyup( function()  {
 
-			var searchBar = document.getElementById("#search");
-			if( searchBar != null ) {
-				if( searchBar.value == "")
-					console.log("EMPTY");
-					return;
-			}
+	$(document).ready(function() {
+		var regionFilter = [];
+		var typeFilter = [];
+		$('.typeFilter-container input:checked').each( function() {
+			typeFilter.push( $(this).attr('name') );
+		})
+		$('.regionFilter-container input:checked').each( function() {
+			regionFilter.push( $(this).attr('name') );
+		})
 
-			var regionFilter = [];
-			var typeFilter = [];
-			$('.typeFilter-container input:checked').each( function() {
-				typeFilter.push( $(this).attr('name') );
-			})
-			$('.regionFilter-container input:checked').each( function() {
-				regionFilter.push( $(this).attr('name') );
-			})
+		//var search_result = "{{shops|safe}}";
+		var search_result = arrayOfArrays = JSON.parse("{{shops|safe}}");
+		//var jsonResult = JSON.stringify(search_result);
 
-			console.log("Region: " + regionFilter);
-			console.log("Type: " + typeFilter);
-			$.ajax( {
-				type: 'POST',
-				url: '/search/',
-				data: {
-					'search_text': $('#search').val(),
-					'sort_by': $( "#sortby" ).val(),
-					'region_filtered[]': regionFilter,
-					'type_filtered[]': typeFilter,
-					'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
-				},
-				success: searchSuccess,
-				dataType: 'html'
-			} );
+		//console.log("Search result: " + search_result);
+		//console.log("Region: " + regionFilter);
+		//console.log("Type: " + typeFilter);
+		$.ajax( {
+			type: 'POST',
+			url: '/search/',
+			data: {
+				'search_result[]': search_result,
+				'sort_by': $( "#sortby" ).val(),
+				'region_filtered[]': regionFilter,
+				'type_filtered[]': typeFilter,
+				'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val()
+			},
+			success: searchSuccess,
+			dataType: 'html'
 		} );
-
 	});
 
 	function searchSuccess(data, textStatus, jqXHR ) {
@@ -66,7 +79,7 @@
 		    }
 		}
 
-		$( "#sortby, .filter-container :checkbox" ).change( function() {
+		$( "#sortby, .sub-header :checkbox" ).change( function() {
 			var searchBar = document.getElementById("#search");
 			if( searchBar != null ) {
 				if( searchBar.value == "")
@@ -83,12 +96,15 @@
 				regionFilter.push( $(this).attr('name') );
 			})
 
+			//var search_result = "{{shops|safe}}";
+			var search_result = arrayOfArrays = JSON.parse("{{shops|safe}}");
+			//var jsonResult = JSON.stringify(search_result);
 			console.log("Hello");
 			$.ajax( {
 				type: 'POST',
 				url: '/search/',
 				data: {
-					'search_text': $('#search').val(),
+					'search_result[]': search_result,
 					'sort_by': $( "#sortby" ).val(),
 					'region_filtered[]': regionFilter,
 					'type_filtered[]': typeFilter,
@@ -102,140 +118,315 @@
 
 </script>
 <style>
-
-.result-container {
-	margin: 20px auto;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  width: 90%;
-  padding: 10px;
-	text-align: center;
+* {
+    box-sizing: border-box;
 }
 
-.result-container input[type=text] {
-  padding: 6px;
-  margin-top: 8px;
-  font-size: 17px;
-	background: #ddd;
-	border:none;
-	width: 30%;
- -webkit-transition: width 0.4s ease-in-out;
-  transition: width 0.4s ease-in-out;
+/* Add a gray background color with some padding */
+body {
+    font-family: Arial;
+    <!-- padding: 20px; -->
+    background: #f1f1f1;
 }
 
-.result-container input[type=text]:focus {
-    width: 90%;
+.dropdown-menu a {
+    white-space:normal;
+}
+.dropdown-menu > li{
+    position:relative;
+    margin: 10px;
+    padding-left: 20px;
 }
 
-.result-container  .search-container button {
-  padding: 6px 10px;
-  margin-top: 8px;
-  margin-right: 16px;
-  background: #ddd;
-  font-size: 17px;
-  border: none;
-  cursor: pointer;
+.dropdown-menu > li > i{
+    position:absolute;
+    left:0;
+    top:3px;
 }
 
-.result-container  .search-container button:hover {
-  background: #ccc;
+.container {
+	padding: 16px;
+	background-color: white;
+	width: 100%;
 }
 
-.sortby {
-	float: right;
-	margin: 25px 20px 20px 0px;
+/* Header/Blog Title */
+.header {
+    padding: 10px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
 }
 
-.left-maincontent {
-	width: 75%;
-	float: left;
+.search-header {
+    /* The image used */
+    /* background-image: url("/image/bg-search.jpg"); */
+		background-image: url('{% static '/image/bg-search.jpg' %}');
+
+    max-width: 75%;
+
+    min-height: 150px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
 }
 
-.right-maincontent {
-	margin-left: 75%;
-	/* Change this to whatever the width of your left column is*/
-}
-.clear {
-	clear: both;
+.sub-header {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    position: relative;
+    max-width: 75%;
+
+    border: 1px solid #888;
+    /* border-radius: 0px 0px 20px 20px; */
+		border-radius: 0px;
+
+    padding: 30px;
 }
 
-.filter-container {
-	margin: 20px auto;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  width: 80%;
-  padding: 10px;
-	font-size: 1em;
+.responsive {
+    width: 70%;
+    max-width: 70%;
+    height: auto;
 }
 
+.navbar-header{
+  margin-left:5px;
+  width:100%;
+}
+
+.middle {
+  text-align: center;
+  margin: auto;
+  padding: 50px;
+}
+
+.search-header input[type=text] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('{% static 'image/searchicon.png' %}');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 15px 30px 15px 40px;
+}
+
+#slogan {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    color: #000;
+    opacity: 1;
+    transition: opacity .3s ease-out;
+    -webkit-animation:fadeIn ease-out ;
+    -moz-animation:fadeIn ease-out ;
+    animation:fadeIn ease-out;
+    -webkit-animation-fill-mode:forward;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+    -moz-animation-fill-mode:forward;
+    animation-fill-mode:forward;
+    -webkit-animation-duration: 1.5s;
+    -moz-animation-duration: 1.5s;
+    animation-duration: 1.5s;
+    -webkit-animation-delay: 4.9s; /* Chrome, Safari, Opera */
+    animation-delay: 4.9s;
+    animation-iteration-count: infinite;
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #444;
+    color: #fff;
+    /* margin-top: 20px; */
+		position: fixed;
+    left: 0;
+    bottom: 0;
+		width: 100%;
+		z-index: 10;
+}
+
+.sub-header label {
+	border:1px solid #ccc;
+	padding:10px;
+	margin: 0px 10px 0 10px;
+	display:block;
+}
+
+.sub-header label:hover {
+	/* background:#eee; */
+	border:1px solid #e74c3c;
+	/* color: #e74c3c; */
+	cursor:pointer;
+}
+
+input[type='checkbox'] {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+/* Labels for checked inputs */
+input:checked + label {
+  /* background: red; */
+	border:1px solid #e74c3c;
+	color: #e74c3c;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+		color: #555;
+}
 
 </style>
 </head>
 <body>
 
-<div class="topnav">
-  <a class="active" href="{% url 'system:home'%}">Home</a>
-	{% if user.is_authenticated %}
-		<a href="{% url 'system:userfavourite'%}">Favourite</a>
-	  <a href="{% url 'system:managepoll'%}">Manage Poll</a>
-	  <a href="{% url 'system:createpoll'%}">Create Poll</a>
-	{% endif %}
-	<!--
-		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(True) (when on Django < 1.10 it was True)
-		For AUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(False) (when on Django < 1.10 it was False)
-  -->
-	{% if user.is_authenticated %}
-	<form action="{% url 'system:logout_user'%}" method='POST'>
-		{% csrf_token %}
-		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
-	</form>
-	{% else %}
-	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+<!-- navbar-dark bg-info -->
+<nav class="navbar navbar-expand-sm" style="padding: 10px 15%;">
+<div class="navbar-header">
+    <a class="navbar-brand" href="{% url 'system:blank'%}"><img src="{% static 'image/logo.png' %}" alt="banner" class="responsive" style="height: 60px; width: 150px; margin-top: -10px;"></a>
 
-	{% endif %}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarXs">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse pull-right" id="collapsingNavbarXs">
+        <ul class="navbar-nav" style="font-family: 'Open Sans'; font-size: 18px; color: black;">
+						{% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'system:createpoll'%}">Create Poll</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'system:managepoll'%}">Manage Poll</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'system:userfavourite'%}">Favourites</a>
+            </li>
+						{% endif %}
+						<li class="nav-item">
+								{% if user.is_authenticated %}
+								{% else %}
+										<a class="nav-link" href="{% url 'system:register'%}">Register</a>
+								{% endif %}
+            </li>
+            <li class="nav-item">
+								<!--
+									For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+										CallableBool(True) (when on Django < 1.10 it was True)
+									For AUTHENTICATED user calling {{user.is_authenticated}} results:
+										CallableBool(False) (when on Django < 1.10 it was False)
+								-->
+								{% if user.is_authenticated %}
+									<form id="logout-form" action="{% url 'system:logout_user'%}" method='POST'>
+										{% csrf_token %}
+										<!-- <button type="submit" class="auth_btn" style="width:auto;">Logout</button> -->
+									</form>
+									<!-- Note: This is outside the form as to align with other on the nav bar list -->
+									<a class="nav-link" href="javascript:{}" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+								{% else %}
+								  	<a class="nav-link" onclick="document.getElementById('id01').style.display='block'"  href="#">Login</a>
+										<!-- <button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button> -->
+								{% endif %}
+            </li>
+        </ul>
+    </div>
+</div>
+</nav>
+
+<form>
+<div class="search-header">
+  <div class="middle">
+
+			<!-- {% csrf_token %} -->
+			<input type="text" value="{{search_text}}" placeholder="Search.." name="search" id="search">
+    <!-- <input style="width: 95%;" type="text" placeholder=""> -->
+  </div>
+</div>
+
+<div class="sub-header">
+    <h4><b>Type:</b></h4>
+    <div class="row">
+			<div class="form-inline typeFilter-container">
+				<input id="FastFood" type="checkbox" name="Fast Food" value="Fast Food" checked><label for="FastFood">Fast Food</label>
+				<input id="Restaurant" type="checkbox" name="Restaurant" value="Restaurant" checked><label for="Restaurant">Restaurant</label>
+			 	<input id="Cafe" type="checkbox" name="Cafe" value="Cafe" checked><label for="Cafe">Cafe</label>
+				<input id="Bakery" type="checkbox" name="Bakery" value="Bakery" checked><label for="Bakery">Bakery</label>
+				<input id="Others" type="checkbox" name="Others" value="Others" checked><label for="Others">Others</label>
+			</div>
+    </div>
+
+    </br>
+
+     <h4><b>Region:</b></h4>
+    <div class="row">
+			<div class="form-inline regionFilter-container">
+				<input id="NorthEast" type="checkbox" name="North-East" value="North-East" checked><label for="NorthEast">North-East</label>
+				<input id="North" type="checkbox" name="North" value="North" checked><label for="North">North</label>
+				<input id="Central" type="checkbox" name="Central" value="Central" checked><label for="Central">Central</label>
+				<input id="West" type="checkbox" name="West" value="West" checked><label for="West">West</label>
+				<input id="East" type="checkbox" name="East" value="East" checked><label for="East">East</label>
+			</div>
+    </div>
+</div>
+</form>
+
+<div class="container" style="margin-bottom: 50px;">
+
+    <div class="row mb-5" style="display: flex;">
+
+        <div>
+						{% if search_count > 0 %}
+            	<h4><b>{{ search_count }} results for <span style="color: #e74c3c;">"{{search_text}}"</span> </b></h4>
+						{% else %}
+						{% endif %}
+        </div>
+
+        <div style="margin-left: auto;">
+            <select id="sortby" name="sortby" title="Sort by" class="selectpicker">
+                <option>Sort by...</option>
+                <option value="alphabeticalAZ" data-icon="glyphicon glyphicon-sort-by-alphabet" data-subtext="">Sort A to Z</option>
+                <option value="alphabeticalZA" data-icon="glyphicon glyphicon-sort-by-alphabet-alt" data-subtext="">Sort Z to A</option>
+                <option value="popularity" data-icon=" glyphicon glyphicon-star-empty " data-subtext="">Popularity</option>
+            </select>
+        </div>
+    </div>
+
+		<div class="card-deck">
+			<div class="row" id="search-results">
+
+			</div>
+    </div>
 
 </div>
-<div class="left-maincontent">
-	<div class="result-container">
 
-		<div class="search-container">
-				{% csrf_token %}
-				<input type="text" placeholder="Search.." name="search" id="search">
-				<button type="button"><i class="fa fa-search"></i></button>
-		</div>
-		<div class="sortby"><b>SORT BY</b>
-			<select id="sortby">
-			  <option value="alphabeticalAZ">Alphabetical A-Z</option>
-			  <option value="alphabeticalZA">Alphabetical Z-A</option>
-			  <option value="popularity">Popularity</option>
-			</select>
-		</div>
-		<h2>Search your favourite halal restaurant</h2>
-			<ui id="search-results" >
-			</ui>
-	</div>
+
+<div class="footer">
+  <b>&#169; 2018 Halal Pal & Co. All rights reserved.</b>
 </div>
-<div class="right-maincontent">
-	<div class="filter-container">
-		<div class="typeFilter-container">
-			<b>Type</b></br>
-			<input type="checkbox" name="Fast Food" value="Fast Food" checked>Fast Food<br>
-			<input type="checkbox" name="Restaurant" value="Restaurant" checked>Restaurant<br>
-			<input type="checkbox" name="Cafe" value="Cafe" checked>Cafe<br>
-			<input type="checkbox" name="Bakery" value="Bakery" checked>Bakery<br>
-			<input type="checkbox" name="Others" value="Others" checked>Others<br>
-		</div>
-		<div class="regionFilter-container">
-			</br><b>Region</b></br>
-			<input type="checkbox" name="North-East" value="North-East" checked>North-East<br>
-			<input type="checkbox" name="North" value="North" checked>North<br>
-			<input type="checkbox" name="Central" value="Central" checked>Central<br>
-			<input type="checkbox" name="West" value="West" checked>West<br>
-			<input type="checkbox" name="East" value="East" checked>East<br>
-		</div>
-	</div>
-</div>
-<div class="clear"></div>
 
 <div id="id01" class="modal">
 
@@ -257,7 +448,6 @@
     </div>
   </form>
 </div>
-
 
 </body>
 </html>

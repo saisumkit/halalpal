@@ -4,11 +4,25 @@
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- Bootstrap core JavaScript-->
-<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script> -->
 <!-- Core plugin JavaScript-->
-<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script> -->
 <!-- Stylesheet -->
 <link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+
+
+
 
 <script>
 	$( function() {
@@ -49,9 +63,41 @@
 </script>
 <style>
 
-.result-container {
+/* Header/Blog Title */
+.header {
+    padding: 10px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
+		max-width: 75%;
+		min-height: 150px;
+
+		margin-left: auto;
+		margin-right: auto;
+}
+
+.navbar-header{
+  margin-left:5px;
+  width:100%;
+}
+
+/* Footer */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #444;
+    color: #fff;
+    /* margin-top: 20px; */
+		position: fixed;
+    left: 0;
+    bottom: 0;
+		width: 100%;
+}
+
+
+.register-container {
 	margin: 20px auto;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	/* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
   width: 50%;
   padding: 10px;
 	text-align: center;
@@ -61,6 +107,7 @@
 .container {
     padding: 16px;
     background-color: white;
+		width: 100%;
 }
 
 /* Full-width input fields */
@@ -105,57 +152,88 @@ a {
     color: dodgerblue;
 }
 
-/* Set a grey background color and center the text of the "sign in" section */
-.signin {
-    background-color: #f1f1f1;
-    text-align: center;
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+		color: #555;
 }
 
 </style>
 </head>
 <body>
 
-<div class="topnav">
-  <a class="active" href="{% url 'system:home'%}">Home</a>
-	{% if user.is_authenticated %}
-		<a href="{% url 'system:userfavourite'%}">Favourite</a>
-		<a href="{% url 'system:managepoll'%}">Manage Poll</a>
-		<a href="{% url 'system:createpoll'%}">Create Poll</a>
-	{% endif %}
-	<!--
-		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(True) (when on Django < 1.10 it was True)
-		For AUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(False) (when on Django < 1.10 it was False)
-  -->
-	{% if user.is_authenticated %}
-	<form action="{% url 'system:logout_user'%}" method='POST'>
-		{% csrf_token %}
-		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
-	</form>
-	{% else %}
-	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
+	<nav class="navbar navbar-expand-sm" style="padding: 10px 15%;">
+	<div class="navbar-header">
+	    <a class="navbar-brand" href="{% url 'system:blank'%}"><img src="{% static 'image/logo.png' %}" alt="banner" class="responsive" style="height: 60px; width: 120px; margin-top: -10px;"></a>
 
-	{% endif %}
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarXs">
+	        <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <div class="navbar-collapse collapse pull-right" id="collapsingNavbarXs">
+	        <ul class="navbar-nav" style="font-family: 'Open Sans'; font-size: 18px;">
+							{% if user.is_authenticated %}
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:createpoll'%}">Create Poll</a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:managepoll'%}">Manage Poll</a>
+	            </li>
+	            <li class="nav-item">
+	                <a class="nav-link" href="{% url 'system:userfavourite'%}">Favourites</a>
+	            </li>
+							{% endif %}
+							<li class="nav-item">
+									{% if user.is_authenticated %}
+									{% else %}
+											<!-- <a class="nav-link" href="{% url 'system:register'%}">Register</a> -->
+									{% endif %}
+	            </li>
+	            <li class="nav-item">
+									<!--
+										For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(True) (when on Django < 1.10 it was True)
+										For AUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(False) (when on Django < 1.10 it was False)
+									-->
+									{% if user.is_authenticated %}
+										<form id="logout-form" action="{% url 'system:logout_user'%}" method='POST'>
+											{% csrf_token %}
+											<!-- <button type="submit" class="auth_btn" style="width:auto;">Logout</button> -->
+										</form>
+										<!-- Note: This is outside the form as to align with other on the nav bar list -->
+										<a class="nav-link" href="javascript:{}" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+									{% else %}
+									  	<a class="nav-link" onclick="document.getElementById('id01').style.display='block'"  href="#">Login</a>
+											<!-- <button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button> -->
+									{% endif %}
+	            </li>
+	        </ul>
+	    </div>
+	</div>
+	</nav>
+
+<div class="header">
+    <img src="{% static 'image/registerbanner.png' %}" alt="banner" class="responsive">
 </div>
 
-<div class="result-container">
+<div class="register-container">
+		<p>
+			Don't fall behind and join Halal Pal community. It's about time to let others know
+			of your thoughts on the best food and ideal places for every occasion in Singapore.
+			Your little effort can make a big impact. Start eliminating disputes and create a fuss
+			free decision-making amongst your buddies. So why wait? Get yourself involved in Creating
+			a vibrant Halal Pal community and let Halal Pal be your sidekick.
+		</p>
 		<form action="" method="POST">
-			<div class="container">
-				<h1>Register</h1>
-				<p>Please fill in this form to create an account.</p>
 				{% csrf_token %}
 				{{ form_register }}
 
-				<button type="submit" class="registerbtn">Register</button>
-				</div>
-
-				<div class="container signin">
-				<p>Already have an account? <a href="{% url 'system:login_user'%}">Sign in</a>.</p>
-			</div>
+				<button type="submit" class="registerbtn">I'm In!</button>
 		</form>
 </div>
 
+<div class="footer">
+  <b>&#169; 2018 Halal Pal & Co. All rights reserved.</b>
+</div>
 
 <div id="id01" class="modal">
 
@@ -177,6 +255,9 @@ a {
     </div>
   </form>
 </div>
+
+<br/>
+<br/>
 
 </body>
 </html>

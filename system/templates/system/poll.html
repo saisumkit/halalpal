@@ -6,13 +6,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- Bootstrap core JavaScript-->
-<script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery/jquery.min.js' %}"></script> -->
 <!-- Core plugin JavaScript-->
-<script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+<!-- <script src="{%  static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script> -->
 <!-- Stylesheet -->
 <link href="{%  static 'css/stylesheet.css' %}" rel="stylesheet">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/i18n/defaults-en_US.js"></script>
+
 
 <script>
 	$( function() {
@@ -120,8 +138,12 @@
 						maintainAspectRatio: false,
 						responsive: true,
 		        scales: {
-		            yAxes: [{
+		            xAxes: [{
 		                ticks: {
+												//stepValue: 1,
+												min: 0,
+						            max: {{ instance.no_of_participant }},
+						            stepSize: 1,
 		                    beginAtZero:true
 		                }
 		            }]
@@ -132,22 +154,62 @@
 
 </script>
 <style>
-.coupon {
-    border: 5px dotted #bbb;
+/* Header/Blog Title */
+.header {
+    padding: 30px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
+}
+
+
+.poll-header {
+    max-width: 75%;
+
+    margin-left: auto;
+    margin-right: auto;
+		margin-top: 20px;
+
+    position: relative;
+}
+
+.poll-sub-header {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    position: relative;
+    max-width: 75%;
+
+    border-top: 2px solid #888;
+
+    padding: 20px;
+}
+
+.poll-sub-right {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: black;
+    color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+.chart-container {
+    /* border: 5px dotted #bbb; */
     width: 80%;
     border-radius: 15px;
     margin: 20px auto;
+		min-height: 70%;
+		max-height: 70%;
+		height: 70%;
     /*max-width: 500px;*/
 }
 
 .container {
     padding: 2px 16px;
     background-color: #f1f1f1;
-}
-
-.coupon .company-img img {
-    display: block;
-    margin: 10px auto;
 }
 
 .promo {
@@ -245,12 +307,44 @@
     background-color: #c0392b;
     color: white;
     padding: 16px 20px;
-    margin: 10px 5px;
+    margin: 20px 75px 10px 0px;
     border: none;
     cursor: pointer;
-    width: 25%;
+    width: 100%;
     opacity: 0.9;
-	float:  ;
+}
+
+canvas{
+	width:90% !important;
+	height:500px !important;
+}
+
+.navbar-header{
+  margin-left:5px;
+  width:100%;
+}
+
+.container {
+	padding: 16px;
+	background-color: white;
+	width: 100%;
+}
+
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #444;
+    color: #fff;
+    /* margin-top: 20px; */
+		position: fixed;
+    left: 0;
+    bottom: 0;
+		width: 100%;
+}
+
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+		color: #555;
 }
 
 /* For chart.js */
@@ -262,70 +356,141 @@
 </head>
 <body>
 
-<div class="topnav">
-  <a href="{% url 'system:home'%}">Home</a>
-	{% if user.is_authenticated %}
-		<a href="{% url 'system:userfavourite'%}">Favourite</a>
-		<a class="active" href="{% url 'system:managepoll'%}">Manage Poll</a>
-		<a href="{% url 'system:createpoll'%}">Create Poll</a>
-	{% endif %}
-	<!--
-		For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(True) (when on Django < 1.10 it was True)
-		For AUTHENTICATED user calling {{user.is_authenticated}} results:
-			CallableBool(False) (when on Django < 1.10 it was False)
-	-->
-	{% if user.is_authenticated %}
-	<form action="{% url 'system:logout_user'%}" method='POST'>
-		{% csrf_token %}
-		<button type="submit" class="auth_btn" style="width:auto;">Logout</button>
-	</form>
-	{% else %}
-	<button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button>
-	{% endif %}
-</div>
+	<!-- navbar-dark bg-info -->
+	<nav class="navbar navbar-expand-sm" style="padding: 10px 15%;">
+	<div class="navbar-header">
+			<a class="navbar-brand" href="{% url 'system:blank'%}"><img src="{% static 'image/logo.png' %}" alt="banner" class="responsive" style="height: 60px; width: 120px; margin-top: -10px;"></a>
+
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarXs">
+					<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="navbar-collapse collapse pull-right" id="collapsingNavbarXs">
+					<ul class="navbar-nav" style="font-family: 'Open Sans'; font-size: 18px; color: black;">
+							{% if user.is_authenticated %}
+							<li class="nav-item">
+									<a class="nav-link" href="{% url 'system:createpoll'%}">Create Poll</a>
+							</li>
+							<li class="nav-item">
+									<a class="nav-link" href="{% url 'system:managepoll'%}">Manage Poll</a>
+							</li>
+							<li class="nav-item">
+									<a class="nav-link" href="{% url 'system:userfavourite'%}">Favourites</a>
+							</li>
+							{% endif %}
+							<li class="nav-item">
+									{% if user.is_authenticated %}
+									{% else %}
+											<a class="nav-link" href="{% url 'system:register'%}">Register</a>
+									{% endif %}
+							</li>
+							<li class="nav-item">
+									<!--
+										For UNAUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(True) (when on Django < 1.10 it was True)
+										For AUTHENTICATED user calling {{user.is_authenticated}} results:
+											CallableBool(False) (when on Django < 1.10 it was False)
+									-->
+									{% if user.is_authenticated %}
+										<form id="logout-form" action="{% url 'system:logout_user'%}" method='POST'>
+											{% csrf_token %}
+											<!-- <button type="submit" class="auth_btn" style="width:auto;">Logout</button> -->
+										</form>
+										<!-- Note: This is outside the form as to align with other on the nav bar list -->
+										<a class="nav-link" href="javascript:{}" onclick="document.getElementById('logout-form').submit(); return false;">Logout</a>
+									{% else %}
+											<a class="nav-link" onclick="document.getElementById('id01').style.display='block'"  href="#">Login</a>
+											<!-- <button class="auth_btn" onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Login</button> -->
+									{% endif %}
+							</li>
+					</ul>
+			</div>
+	</div>
+	</nav>
 
 {% if isShowResult %}
-<div class="coupon">
+
+<div class="poll-header d-flex justify-content-between">
+    <div>
+        <h3 style="color: #e74c3c;"><b> {{ instance.title }}</b></h3>
+    </div>
+    <div class="float-right">
+        CODE #<br>
+        {{ instance.code }}
+    </div>
+</div>
+
+
+<div class="poll-sub-header d-flex justify-content-between">
+    <div>
+        <img src="{% static 'image/user.png' %}" alt="Participant" class="responsive" style="width: 33px; height: 33px;"> {{ instance.current_participant }} / {{ instance.no_of_participant }}
+        </br>
+        <img src="{% static 'image/calendar.png' %}" alt="Expire" class="responsive" style="width: 33px; height: 33px;">  {{instance.expiry_date}}
+				</br>
+				<img src="{% static 'image/status.png' %}" alt="Expire" class="responsive" style="width: 33px; height: 33px;"> Closed:
+				 {% if poll.closed %} Yes
+				 {% else %} No
+				 {% endif %}
+    </div>
+    <div>
+			<button  type="button" class="btn btn-danger btn-lg" style="min-width: 200px;" onclick="savetoClickboard()">Copy Link</button>
+			</br>
+			</br>
+			{% if isPollOwner and instance.closed == False %}
+				<button  type="button" class="btn btn-danger btn-lg" style="min-width: 200px;" onclick="closePoll()">Close Poll</button>
+			{% endif %}
+    </div>
+</div>
+
+<div class="chart-container">
 	<div class="container" style="background-color:white">
-		<p><b>Title:</b> {{ instance.title }}</p>
-	  <p><b>Participant:</b> {{instance.current_participant}}/{{ instance.no_of_participant }}</p>
-			<p><b>Closed:</b>
-			{% if instance.closed %} Yes
-			{% else %} No
-			{% endif %}</p>
-		<p><b>Expiry Date:</b> {{instance.expiry_date}}</p>
-		<p><b>Code:</b> {{ instance.code }}</p>
 		<canvas id="myChart" width="100	" height="100"></canvas>
-		<!-- {% for choice in choices.all %}
-		<div class="reviews-container">
-			<div class="date">{{ choice.shop.company_name }}</div>
-			<strong>{{ choice.vote_count }}</strong>
 		</div>
-		{% empty %}
-		<p>No reviews here yet :(</p>
-		{% endfor %} -->
-		</div>
-		<button class="copylink_btn" onclick="savetoClickboard()">Copy Link</button>
-		{% if isPollOwner and instance.closed == False %}
-			<button class="closepoll_btn"  onclick="closePoll()">Close Poll</button>
-		{% endif %}
 </div>
 <div class="clear"></div>
 {% else %}
+
+<div class="poll-header d-flex justify-content-between">
+    <div>
+        <h3 style="color: #e74c3c;"><b> {{ instance.title }}</b></h3>
+    </div>
+    <div class="float-right">
+        CODE #<br>
+        {{ instance.code }}
+    </div>
+</div>
+
+
+<div class="poll-sub-header d-flex justify-content-between">
+    <div>
+        <img src="{% static 'image/calendar.png' %}" alt="Expire" class="responsive" style="width: 33px; height: 33px;">  {{instance.expiry_date}}
+				</br>
+    </div>
+    <div>
+    </div>
+</div>
 <div class="poll-question">
-    <h4>Title: {{ instance.title }}</h4>
+		<h4>Choices: </h4>
     <div class="radio-toolbar">
         {% csrf_token %}
     {% for choice in choices.all %}
             <input type="radio" id="{{ choice.shop.pk }}" name="places" value="{{ choice.pk }}" checked>
             <label for="{{ choice.shop.pk }}">{{ choice.shop.company_name }}</label>
     {%endfor%}
-    <button class="poll_question_btn " onclick="submitPoll()">Submit</button>
+		<div class="d-flex justify-content-between">
+		    <div>
+		    </div>
+		    <div>
+						 <button class="poll_question_btn " onclick="submitPoll()">Submit</button>
+		    </div>
+		</div>
+
     </div>
 </div>
 {% endif %}
 
+<div class="footer">
+  <b>&#169; 2018 Halal Pal & Co. All rights reserved.</b>
+</div>
 
 
 <div id="id01" class="modal">

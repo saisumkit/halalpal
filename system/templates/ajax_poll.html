@@ -27,17 +27,18 @@ li {
 
   {% for shop in shops %}
     <li>
-      <div class="card" onclick="newElement( {{ shop.pk }} )">
-        <!-- <a href="/shop/{{ shop.id }}/"> -->
-          <div class="container">
-						<span id="{{shop.pk}}" style="display:none">{{ shop.company_name }} @ {{ shop.address }}</span>
-						<h4><b><span>{{ shop.company_name }}</span></b></h4>
-            <h4><span> {{ shop.address }}</span></h4>
-            <!-- <h4><b><span id="{{shop.pk}}">{{ shop.company_name }}</span></b></h4>
-            <h4><span id="{{shop.address}}"> {{ shop.address }}</span></h4> -->
-          </div>
-        <!-- </a> -->
-      </div>
+			<div class="col-auto mb-3">
+				<div class="card" style="width: 32.5rem;" onclick="newElement( {{ shop.pk }} )">
+						<div class="card-body">
+							<span id="{{shop.pk}}" style="display:none">{{ shop.company_name }} @ {{ shop.address }}</span>
+							<h4 class="card-title"><b>{{ shop.company_name }}</b></h4>
+							<p class="card-text text-muted">{{ shop.address }}</p>
+							<p class="card-text pull-right"><small class="text-muted">{{ shop.categorization }} </small></p>
+						</div>
+				</div>
+			</div>
+
+
     </li>
   {% endfor %}
 

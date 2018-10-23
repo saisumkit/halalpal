@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from .models import Review
 
 
@@ -17,3 +18,12 @@ class ReviewForm( forms.ModelForm ):
     class Meta:
         model = Review
         fields = [ 'body', 'rating']
+
+
+class UserCreateForm(UserCreationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UserCreateForm, self).__init__(*args, **kwargs)
+
+        for fieldname in ['username', 'password1', 'password2']:
+            self.fields[fieldname].help_text = None
